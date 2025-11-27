@@ -29,15 +29,13 @@ for fi = 1:length(families)
     end
 end
 
-% names_all = all_name
-
 N_coats = length(all_alpha);
 fprintf('Total usable coatings in database: %d\n', N_coats);
 
 %% Baseline coating for all panels
 % keep baseline so only 1 panel changes at a time during optimization.
 
-idx_white = find(all_name == "Titanium Oxide White Paint with methyl Silicone",1);
+idx_white = find(all_name == "Titanium Oxide White Paint with Methyl Silicone",1);
 idx_black = find(all_name == "Paladin Black Lacquer",1);
 idx_cond  = find(all_name == "Brilliant Aluminium Paint",1);
 
@@ -68,6 +66,10 @@ best_Tmax = zeros(6,1);
 for panel = 1:6
     fprintf('\n=== Optimizing Panel %d ===\n', panel);
 
+    energy_list = nan(N_coats,1);
+    Tmin_list   = nan(N_coats,1);
+    Tmax_list   = nan(N_coats,1);
+
     for k = 1:N_coats
 
         % Copy baseline, but replace coating on current panel
@@ -86,6 +88,11 @@ for panel = 1:6
         Tmin = min(Tp);
         Tmax = max(Tp);
 
+        % Store for diagnostics
+        energy_list(k) = Q_total;
+        Tmin_list(k)   = Tmin;
+        Tmax_list(k)   = Tmax;
+
         % Must meet temperature requirement
         if Tmin < T_min_req || Tmax > T_max_req
             continue
@@ -101,6 +108,20 @@ for panel = 1:6
             best_Tmax(panel)   = Tmax;
         end
     end
+
+    coat_idx = 1:N_coats;
+
+    % Temperature envelope vs coating index for this panel
+    figure(1);
+    subplot(3,2,panel);
+    plot(coat_idx, Tmin_list, 'b.--', 'LineWidth', 1.2); hold on;
+    plot(coat_idx, Tmax_list, 'r.--', 'LineWidth', 1.2);
+    yline(T_min_req,'--k'); yline(T_max_req,'--k');
+    xlabel('Coating Index');
+    ylabel('Temperature [K]');
+    title(sprintf('Panel %d — Temperature Envelope Across All Coatings', panel));
+    legend('T_{min}','T_{max}','Spec Min','Spec Max','Location','best');
+    grid on;
 
     if best_idx(panel) == 0
         fprintf('No feasible coating found for Panel %d.\n', panel);
@@ -135,12 +156,13 @@ emiss_opt = best_emiss;
 [T_opt, Q_total_opt] = run_thermal(alpha_opt, emiss_opt);
 
 % Build time vector assuming 30s step
-dt = 30;                               % [s]
+dt = 30;
 Nsteps = size(T_opt, 2);
-time = (0:Nsteps-1) * dt;              % [s]
+time = (0:Nsteps-1) * dt;
 
 % Plot
-figure;
+figure
+subplot(3,1,1);
 plot(time, T_opt(1,:), 'LineWidth', 1.5); hold on;
 plot(time, T_opt(2,:), 'LineWidth', 1.5);
 yline(273, '--b'); yline(303, '--r'); % min and max temperature lines
@@ -150,7 +172,7 @@ title('Panels 1 & 2 Temperature History (Optimal Coatings)');
 legend('Panel 1','Panel 2','T_{min}','T_{max}','Location','best');
 grid on;
 
-figure;
+subplot(3,1,2);
 plot(time, T_opt(3,:), 'LineWidth', 1.5); hold on;
 plot(time, T_opt(4,:), 'LineWidth', 1.5);
 yline(273, '--r'); yline(303, '--b');
@@ -160,7 +182,7 @@ title('Panels 3 & 4 Temperature History (Optimal Coatings)');
 legend('Panel 3','Panel 4','T_{min}','T_{max}','Location','best');
 grid on;
 
-figure;
+subplot(3,1,3);
 plot(time, T_opt(5,:), 'LineWidth', 1.5); hold on;
 plot(time, T_opt(6,:), 'LineWidth', 1.5);
 yline(273, '--r'); yline(303, '--b');

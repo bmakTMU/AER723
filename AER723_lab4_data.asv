@@ -10,27 +10,38 @@
 alpha = [88 96 96 96 96 97 97 96 96 96 95 94 91 97 95 98 93 92 94 96]'/100;
 emm = [  88 88 88 91 87 73 75 89 86 86 84 94 94 91 75 91 92 72 90 85]'/100;
 coating_names = [
-    "Anodized Black";
-    "Carbon Black Paint NS-7";
-    "Catalac Black Paint";
-    "Chemglaze Black Paint Z306";
-    "Derlin Black Plastic";
-    "Ebanol C Black";
-    "Ebanol C Black-384 Equivalent Sun Hours UV";
-    "GSFC Black Silicate MS-94";
-    "GSFC Black Paint 313-1";
-    "Hughson Black Paint H322";
-    "Hughson Black Paint L-300";
-    "Martin Black Paint N-150-1";
-    "Martin Black Velvet Paint";
+    "Anodized black";
+    "carbon black paint NS-7";
+    "catalac black paint";
+    "chemglaze black paint z306";
+    "derlin black plastic";
+    "ebanol c black";
+    "ebanol c black-384 Equivalent Sun Hours UV";
+    "GSFC Black silicate ms-94";
+    "gsfc black paint 313-1";
+    "hughson black paint h322";
+    "hughson black paint L-300";
+    "martin black paint N-150-1";
+    "Martin black velvet paint";
     "3M Black Velvet Paint";
     "Paladin Black Lacquer";
     "Parsons Black Paint";
     "Polyethylene Black Paint";
     "Pyramil Black on Beryllium Copper";
     "Tedlar Black Plastic";
-    "Velestat Black Plastic";
+    "Velestat Black Plastic"
 ];
+
+% Extract first char and the remainder
+firstChar = extractBetween(coating_names, 1, 1);
+rest = extractAfter(coating_names, 1);
+
+% Uppercase only alphabetic first characters, leave others (digits, symbols) unchanged
+alphaMask = isstrprop(firstChar, 'alpha');
+firstChar(alphaMask) = upper(firstChar(alphaMask));
+
+% Recombine
+coating_names = firstChar + rest;
 
 %   Table
 coating.b=table(alpha, emm, coating_names);
@@ -67,9 +78,9 @@ coating_names = [
     "Sherwin Williams White Paint(A8w11)";
     "Sherwin Williams White Paint (F8W2030)";
     "Sherwin Williams F8W2030 WITH pOLASOL v6v241";
-    "Sperex White Paint";
+    "sPEREX White Paint";
     "Tedflar White Plastic";
-    "Titanium Oxide White Paint with Methyl Silicone";
+    "Titanium Oxide White Paint with methyl Silicone";
     "Titanium Oxide White Paint with Potassium Silicate";
     "Zerlauts S-13G White Paint";
     "Zerlauts Z-93 White Paint";
