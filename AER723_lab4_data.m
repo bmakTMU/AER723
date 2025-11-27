@@ -91,8 +91,8 @@ coating_names = [
     "Finch aluminium Paint 643-1-1";
     "Leafing Aluminium in Epon 828";
     "Leafing Aluminium (80-U)";
-    "NRL Learfing Almunium Paint 1";
-    "NRL Learfing Almunium Paint 2";
+    "NRL Leafing Almunium Paint 1";
+    "NRL Leafing Almunium Paint 2";
     "Sillicone ALuminium Paint";
     "Dupont Silver Paint 4817";
     "Chromeric Silver Paint 586";
